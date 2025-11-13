@@ -24,6 +24,8 @@ SSH_PORT="$1"
 SWAP_SIZE_MB="$2"
 # ssh配置文件
 SSH_CONFIG="/etc/ssh/sshd_config"
+# 用户名
+USER=root
 
 
 
@@ -37,7 +39,7 @@ red(){ echo -e "\033[31m$1\033[0m"; }
 green "[1/8] 更新系统源并安装基础软件..."
 
 apt update -y && apt upgrade -y
-apt install -y vim curl wget git ufw htop net-tools lsof unzip fail2ban sudo ca-certificates gnupg lsb-release logrotate
+apt install -y vim curl wget git ufw htop net-tools lsof unzip fail2ban sudo ca-certificates gnupg lsb-release logrotate python3-systemd
 
 if ! grep -q "^[[:space:]]*alias ll=['\"]" ~/.bashrc; then
     cat >> ~/.bashrc << 'EOF'
@@ -54,7 +56,17 @@ source ~/.bashrc
 
 # 2. 更改 sshd_config
 green "[2/8] 设置 root 密码（请自行输入新密码）..."
-passwd root
+last_change_passwd=$(chage -l ${USER} | grep "Last password change" | awk -F ': ' '{print$2}' | xargs -I{} date -d "{}" +%s)
+now_date=$(date +%s)
+diff_date=(( (${now_date} - ${last_change_passwd}) / 86400 ))
+
+if [[ ${diff_date} -gt 7 ]];then
+    echo "密码已超过 7 天未改，重新设置密码"
+    passwd root
+else
+    echo "用户最近已改过密码，跳过"
+fi
+
 
 green "[2/8] 修改 SSH 端口  ..."
 cp -a ${SSH_CONFIG} ${SSH_CONFIG}.bak_$(date +%F_%T)
