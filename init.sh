@@ -58,7 +58,9 @@ source ~/.bashrc
 green "[2/8] 设置 root 密码（请自行输入新密码）..."
 last_change_passwd=$(chage -l ${USER} | grep "Last password change" | awk -F ': ' '{print$2}' | xargs -I{} date -d "{}" +%s)
 now_date=$(date +%s)
-diff_date=(( (${now_date} - ${last_change_passwd}) / 86400 ))
+diff_date=$(( (now_date - last_change_passwd) / 86400 ))
+
+echo "上次改密码距今 ${diff_date} 天"
 
 if [[ ${diff_date} -gt 7 ]];then
     echo "密码已超过 7 天未改，重新设置密码"
