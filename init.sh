@@ -38,6 +38,16 @@ green "[1/8] 更新系统源并安装基础软件..."
 
 apt update -y && apt upgrade -y
 apt install -y vim curl wget git ufw htop net-tools lsof unzip fail2ban sudo ca-certificates gnupg lsb-release logrotate
+
+if ! grep -q "alias ll=" ~/.bashrc; then
+    cat >> ~/.bashrc << 'EOF'
+# 常用别名
+alias ll='ls -lh --color=auto'
+alias la='ls -lAh --color=auto'
+alias l='ls -CF --color=auto'
+EOF
+fi
+source ~/.bashrc
 # if [[ $? -ne 0 ]]; then
 #     red "更新系统源并安装基础软件出现错误...请排查"
 #     exit 1
@@ -53,7 +63,7 @@ sed -i "s/^#\?Port .*/Port ${SSH_PORT}/" "${SSH_CONFIG}"
 sed -i "s/^#\?PermitRootLogin.*/PermitRootLogin yes/" "${SSH_CONFIG}"
 sed -i "s/^#\?PasswordAuthentication.*/PasswordAuthentication yes/" "${SSH_CONFIG}"
 # 最后再重启sshd 服务
-
+systemctl restart sshd
 # 3. 配置fail2ban
 green "[3/8] 配置fail2ban  ..."
 cat >/etc/fail2ban/jail.local <<EOF
