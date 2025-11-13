@@ -57,7 +57,7 @@ green "[2/8] 设置 root 密码（请自行输入新密码）..."
 passwd root
 
 green "[2/8] 修改 SSH 端口  ..."
-cp -a ${SSH_CONFIG} ${SSH_CONFIG}.bak_${date +%F_%T}
+cp -a ${SSH_CONFIG} ${SSH_CONFIG}.bak_$(date +%F_%T)
 
 sed -i "s/^#\?Port .*/Port ${SSH_PORT}/" "${SSH_CONFIG}" 
 sed -i "s/^#\?PermitRootLogin.*/PermitRootLogin yes/" "${SSH_CONFIG}"
