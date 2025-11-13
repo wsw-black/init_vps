@@ -39,7 +39,7 @@ green "[1/8] 更新系统源并安装基础软件..."
 apt update -y && apt upgrade -y
 apt install -y vim curl wget git ufw htop net-tools lsof unzip fail2ban sudo ca-certificates gnupg lsb-release logrotate
 
-if ! grep -q "alias ll=" ~/.bashrc; then
+if ! grep -q "^[[:space:]]*alias ll=['\"]" ~/.bashrc; then
     cat >> ~/.bashrc << 'EOF'
 # 常用别名
 alias ll='ls -lh --color=auto'
